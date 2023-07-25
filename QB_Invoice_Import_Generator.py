@@ -241,10 +241,14 @@ class ReportGenerator:
         df['NewUnit$'] = self.raw_invoice['Barcode'].apply(lambda x: self.get_New_Unit_Price(x))
         df['NewShipAmount'] = df['ShipQty'] * df['NewUnit$']
         df['ShipAmount'] = df['ShipAmount'].astype('float32')
-        df['NewShipAmount'] = df['NewShipAmount'].astype('float32')
-        df['UPC'] = self.raw_invoice['Barcode']
-        df['Category'] = self.raw_invoice['Barcode'].apply(lambda x: self.get_Category_Name(x))
+        # df['NewShipAmount'] = df['NewShipAmount'].astype('float32')
+        df['UPC'] = self.raw_invoice['Barcode']    
+        df['Category'] = self.raw_invoice['Barcode'].apply(lambda x: self.get_Category_Name(x))  
         
+        #Custom Formatting
+        df['NewUnit$'] = df['NewUnit$'].round(2)
+        df['NewShipAmount'] = df['NewShipAmount'].round(2)
+        df['UPC'] = df['UPC'].astype(str).str.zfill(10)
     
         self.LensImport = df
 
@@ -276,6 +280,8 @@ class ReportGenerator:
         df['Item'] = ['Shipping']*length
         df['ShipVia'] = self.raw_invoice['ShipVia']
         df['Freight'] = self.raw_invoice['Freight']
+        df['Freight'] = df['Freight'].round(2)
+
         df = df[df['Freight']!=0]
         self.ShippingImport = df
 
@@ -332,6 +338,7 @@ class ReportGenerator:
         df['NewShipAmount'] = self.get_sum_NewShipAmount(customers)
         df['Discount'] =  df['NewShipAmount']*.05
         df['Discount'] = df['Discount'].apply(lambda x: round(x, 2))
+        df['Discount'] = df['Discount'].round(2)
         df['Total Amount Owed'] = round(df['NewShipAmount']-df['Discount'], 2)
         self.DiscountImport = df
     
@@ -468,6 +475,7 @@ class ReportGenerator:
         df['Item'] = ['SOMO Stock'] * length 
         df['ItemName'] = ['Tax'] * length
         df['NewShipAmount'] = temp['Tax'].values
+        df['NewShipAmount'] = df['NewShipAmount'].round(2)
         self.TaxSheet = df
 
     def generate_csv(self):
