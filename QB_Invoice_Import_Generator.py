@@ -366,7 +366,10 @@ class ReportGenerator:
         temp = pd.DataFrame()
         temp['Pivotal #'] = [self.get_Pivotal_Account(i) for i in customers_who_didnt_purchase]
         temp['DropShipNo'] = [int(i) for i in customers_who_didnt_purchase]
+        
         df = df.append(temp)
+        #Custom function - sort
+        df = df.sort_values(by='Pivotal #')
         self.SummarySheet = df
 
     def generate_Summary_Overview(self):
