@@ -178,6 +178,14 @@ class ReportGenerator:
             self.error_report(f'Barcode {upc} not found in Price Sheet', 'MasterReference, PriceSheet ')
         return self.price_reference[self.price_reference['UPC']==upc]['Retail'].iloc[0]
 
+    def get_Category_Name(self, upc):
+        """Sets category name based on Barcode"""
+        upc = int(upc)
+        if self.price_reference[self.price_reference['UPC']==upc].empty:
+            self.error_report(f'Barcode {upc} not found in Price Sheet', 'MasterReference, PriceSheet ')
+        return self.price_reference[self.price_reference['UPC']==upc]['Lens'].iloc[0]
+        
+            
     def get_sum_ShipAmount(self, customers):
         values = []
         for customer in customers:
@@ -232,9 +240,12 @@ class ReportGenerator:
         df['ShipAmount'] = self.raw_invoice['ShipAmount']
         df['NewUnit$'] = self.raw_invoice['Barcode'].apply(lambda x: self.get_New_Unit_Price(x))
         df['NewShipAmount'] = df['ShipQty'] * df['NewUnit$']
-        
         df['ShipAmount'] = df['ShipAmount'].astype('float32')
         df['NewShipAmount'] = df['NewShipAmount'].astype('float32')
+        df['UPC'] = self.raw_invoice['Barcode']
+        df['Category'] = self.raw_invoice['Barcode'].apply(lambda x: self.get_Category_Name(x))
+        
+    
         self.LensImport = df
 
     
