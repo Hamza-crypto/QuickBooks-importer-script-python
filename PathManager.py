@@ -11,7 +11,7 @@ class locationManager:
     
     def get_current_loc(self):
         """Returns filepath of this program."""
-        return os.path.dirname(sys.executable)#os.path.dirname(os.path.abspath(__file__))
+        return os.path.dirname(os.path.abspath(__file__))#os.path.dirname(sys.executable)
         
 
     def get_input_path(self):

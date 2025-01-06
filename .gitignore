@@ -1,0 +1,10 @@
+__pycache__
+ERROR_DETAILS.csv
+TRACEBACK.txt
+MasterReference.xlsx
+input/*
+output/*
+archive/*
+
+working-exe/Output/Invoice Import 1 (Dec 2024).xlsx
+working-exe/Archive/(H00241) PIVOTAL BUYING GROUP LLC. - Invoice Detail List December 2024).csv

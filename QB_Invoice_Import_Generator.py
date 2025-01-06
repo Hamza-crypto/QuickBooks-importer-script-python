@@ -19,7 +19,8 @@ class SanityCheck:
         2. If there's a duplicate Pivotal Group number identified
         3. If there's a duplicate Stock lens account number identified.
         """
-        self.current_location = os.path.dirname(sys.executable)#os.path.dirname(os.path.abspath(__file__))
+        #self.current_location = os.path.dirname(os.path.abspath(__file__)) #use this line for local development
+        self.current_location = os.path.dirname(sys.executable)
         reference_path = os.path.join(self.current_location, 'MasterReference.xlsx')
         self.price_reference = pd.read_excel(reference_path, sheet_name='PriceSheet', engine='openpyxl')
         self.customer_list = pd.read_excel(reference_path, sheet_name='CustomerList', engine='openpyxl')
@@ -81,7 +82,8 @@ class SanityCheck:
 class ReportGenerator:
     def __init__(self):
         """Handles all the file locations. Note: This script will only work with files in the same directory as it."""
-        self.current_location = os.path.dirname(sys.executable)#os.path.dirname(os.path.abspath(__file__))
+        #self.current_location = os.path.dirname(os.path.abspath(__file__)) #use this line for local development
+        self.current_location = os.path.dirname(sys.executable)
         self.LensImport = None
         self.ShippingImport = None
         self.DiscountImport = None
@@ -147,10 +149,10 @@ class ReportGenerator:
     def get_month_of_invoice(self):
         """Get which month this invoice is for."""
         months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+        year_pattern = "2\\d\\d\\d"
         for m in months:
             if re.search(m, self.raw_invoice_path):
                 this_month = months.index(m)+1
-            year_pattern = "2\d\d\d"
             this_year = int(re.findall(year_pattern, self.raw_invoice_path)[0])
         return date(this_year, this_month, 1)
 
@@ -210,7 +212,7 @@ class ReportGenerator:
         Due Date = 'Net 15'
         To Be emailed = False
         Print Later = False
-        Dropship = H00241-/d/d/d/d/d; Given is \d* from supplier (see DropshipNo), use lookups to get this 
+        Dropship = H00241-/d/d/d/d/d; Given is \\d* from supplier (see DropshipNo), use lookups to get this 
         Pivotal Account = /d/d/d/d/dA; get from lookup from Dropship
         DropShipNo = number given by supplier
         OrderID = S/d/d/d/d/d/d; get from Raw Invoice Data
@@ -259,8 +261,8 @@ class ReportGenerator:
         Due Date = 'Net 15'
         To Be emailed = False
         Print Later = False
-        Dropship = H00241-/d/d/d/d/d; Given is \d* from supplier (see DropshipNo), use lookups to get this
-        OrderID = S/d/d/d/d/d/d; get from Raw Invoice Dat
+        Dropship = H00241-/d/d/d/d/d; Given is \\d* from supplier (see DropshipNo), use lookups to get this
+        OrderID = S/d/d/d/d/d/d; get from Raw Invoice Data
         ShipDate = m/d/y; get from Raw Invoice Data
         Item = 'Shipping'
         ShipVia = str; get from Raw Invoice Data
@@ -367,7 +369,7 @@ class ReportGenerator:
         temp['Pivotal #'] = [self.get_Pivotal_Account(i) for i in customers_who_didnt_purchase]
         temp['DropShipNo'] = [int(i) for i in customers_who_didnt_purchase]
         
-        df = df.append(temp)
+        df = pd.concat([df, temp], ignore_index=True)
         #Custom function - sort
         df = df.sort_values(by='Pivotal #')
         self.SummarySheet = df
@@ -505,13 +507,14 @@ class ReportGenerator:
         self.LensReturnsCredits.to_excel(writer, index=False, sheet_name='Lens Returns Credits')
         self.SummarySheet.to_excel(writer, index=False, sheet_name='Summary Details')
         self.SummaryOverviewSheet.to_excel(writer, index=False, sheet_name='Summary Overview')
-        writer.save()
+        writer.close()
         self.archive_inputs()
 
 
 def main(_path = ''):
     if not _path:
-        _path = os.path.dirname(sys.executable)#os.path.dirname(os.path.abspath(__file__))
+        #_path = os.path.dirname(os.path.abspath(__file__)) #use this line for local development
+        _path = os.path.dirname(sys.executable)
  # Currnet loc
     def error_popup(msg):
         """Super simple pop-up to indicate an error has occured."""
